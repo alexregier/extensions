@@ -25,6 +25,32 @@ describe("processing partitions on a new table", () => {
     [table] = await dataset.createTable(`bq_${randomID}`, {});
   });
   describe("addPartitioningToSchema", () => {
+    test("not apply changes if table does not exist", async () => {
+      const config: FirestoreBigQueryEventHistoryTrackerConfig = {
+        datasetId: "dataset",
+        tableId: "table",
+        datasetLocation: "US",
+        timePartitioning: "DAY",
+        timePartitioningField: "end_date",
+        timePartitioningFieldType: "TIMESTAMP",
+        timePartitioningFirestoreField: "endDate",
+        transformFunction: "",
+        clustering: [],
+        bqProjectId: null,
+      };
+
+      const nonExistingTable = dataset.table("nonExistingTable");
+
+      const fields = [];
+
+      const partitioning = new Partitioning(config, nonExistingTable);
+
+      await partitioning.addPartitioningToSchema(fields);
+
+      expect(fields).toEqual([]);
+    })
+
+
     test("adds a custom TIMESTAMP to a schema", async () => {
       const config: FirestoreBigQueryEventHistoryTrackerConfig = {
         datasetId: "dataset",
