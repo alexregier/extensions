@@ -294,6 +294,7 @@ export function buildMaterializedViewQuery({
     )
     SELECT *
     FROM latests
+    WHERE operation != "DELETE"
   `;
 
   // Combine all parts with options before AS
